@@ -2,7 +2,7 @@
 $servername = "localhost";
 $server_username = "root";
 $server_password = "";
-$dbname = "lmis";
+$dbname = "library_system";
 
 // Create connection
 $conn = new mysqli($servername, $server_username, $server_password, $dbname);

@@ -1,4 +1,6 @@
 <?php
+// https://secure.php.net/manual/en/reserved.variables.php
+
 require_once "connect.php";
 
 if (isset($_POST["submit"])) {
@@ -6,10 +8,6 @@ if (isset($_POST["submit"])) {
     $phone = mysqli_real_escape_string($conn, $_POST['phone']);
     $email = mysqli_real_escape_string($conn, $_POST['email']);
     $role = mysqli_real_escape_string($conn, $_POST['role']);
-    if ($_POST['password'] != $_POST['password_confirmation']) {
-        header("Location: ../auth/create_account.php?error=passwords_do_not_match");
-        exit;
-    }
     $password = password_hash($_POST['password'], PASSWORD_BCRYPT);
 
     $stmt = $conn ->prepare("INSERT INTO users (fullname, phone, email, password_hash, role) VALUES (?, ?, ?, ?, ?)");
@@ -17,11 +15,11 @@ if (isset($_POST["submit"])) {
     $stmt ->execute();
 
     if ($stmt->affected_rows > 0) {
-        header("Location: ../auth/login.php");
+        header("Location: ../admin/manage_users.php");
         exit;
     }
     else {
-        echo "Error: " . $stmt->error;
+        header("Location: ../admin/add_user.php?error=" . $stmt->error);
     }
 }
 

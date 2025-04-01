@@ -16,10 +16,10 @@ if (isset($_POST["submit"])) {
         session_start();
 
         if ($user['role'] == 'admin') {
-            $_SESSION['user'] = $user;
+            $_SESSION['admin'] = $user;
             header("Location: ../admin/dashboard.php");
         } else {
-            $_SESSION['admin'] = $user;
+            $_SESSION['user'] = $user;
             header("Location: ../user/dashboard.php");
         }
         exit;

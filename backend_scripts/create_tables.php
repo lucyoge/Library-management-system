@@ -3,7 +3,7 @@
 $servername = "localhost";
 $server_username = "root";
 $server_password = "";
-$dbname = "lmis";
+$dbname = "library_system";
 
 // Create connection
 $conn = new mysqli($servername, $server_username, $server_password);
@@ -41,6 +41,8 @@ $sql_books = "CREATE TABLE IF NOT EXISTS books (
     title VARCHAR(255) NOT NULL,
     author VARCHAR(255) NOT NULL,
     isbn VARCHAR(13) NOT NULL UNIQUE,
+    description TEXT,
+    publisher VARCHAR(255),
     published_date DATE,
     copies_available INT DEFAULT 0,
     cover_photo VARCHAR(255)
@@ -68,6 +70,12 @@ $sql_books_categories = "CREATE TABLE IF NOT EXISTS books_categories (
     FOREIGN KEY (book_id) REFERENCES books(id),
     FOREIGN KEY (category_id) REFERENCES categories(id)
 )";
+
+$sql_default_categories = "INSERT INTO categories (name) VALUES ('Fiction'), ('Non-Fiction'), 
+('Biography'), ('Self-Help'), ('History'), ('Science'), ('Technology'), ('Art'), ('Sports'), ('Travel'), 
+('Food'), ('Finance'), ('Business'), ('Education'), ('Health'), ('Programming'), ('Photography'), 
+('Music'), ('Drama'), ('Comedy'), ('Thriller'), ('Horror'), ('Mystery'), ('Romance'), ('Poetry'), 
+('Philosophy'), ('Religion'), ('Spirituality'), ('Humor')";
 
 $queries = [$sql_users, $sql_books, $sql_borrowed_books, $sql_categories, $sql_books_categories];
 
