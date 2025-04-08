@@ -35,22 +35,28 @@ if (!isset($_SESSION['admin'])) {
                 <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="author" type="text" placeholder="Author" name="author" required>
             </div>
             <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="isbn">
+                    ISBN
+                </label>
+                <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="isbn" type="text" placeholder="ISBN" name="isbn" required>
+            </div>
+            <div class="mb-4">
                 <label class="block text-gray-700 text-sm font-bold mb-2" for="publisher">
                     Publisher
                 </label>
                 <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="publisher" type="text" placeholder="Publisher" name="publisher" required>
             </div>
             <div class="mb-4">
-                <label class="block text-gray-700 text-sm font-bold mb-2" for="year">
-                    Year
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="published_date">
+                    Published Date
                 </label>
-                <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="year" type="number" placeholder="Year" name="year" required>
+                <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="published_date" type="date" placeholder="Published Date" name="published_date" required>
             </div>
             <div class="mb-4">
-                <label class="block text-gray-700 text-sm font-bold mb-2" for="quantity">
-                    Quantity
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="copies_available">
+                    No. of Copies
                 </label>
-                <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="quantity" type="number" placeholder="Quantity" name="quantity" required>
+                <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="copies_available" type="number" placeholder="Copies Available" name="copies_available" required>
             </div>
             <div class="mb-4">
                 <label class="block text-gray-700 text-sm font-bold mb-2" for="cover">
@@ -68,4 +74,3 @@ if (!isset($_SESSION['admin'])) {
 </body>
 
 </html>
-

@@ -13,6 +13,14 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
+// Delete database if not exists
+$sql = "DROP DATABASE IF EXISTS $dbname";
+if ($conn->query($sql) === TRUE) {
+    echo "Database deleted successfully";
+} else {
+    echo "Error deleting database: " . $conn->error;
+}
+
 // Create database if not exists
 $sql = "CREATE DATABASE IF NOT EXISTS $dbname";
 if ($conn->query($sql) === TRUE) {
@@ -40,12 +48,12 @@ $sql_books = "CREATE TABLE IF NOT EXISTS books (
     id INT AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
     author VARCHAR(255) NOT NULL,
-    isbn VARCHAR(13) NOT NULL UNIQUE,
-    description TEXT,
+    isbn VARCHAR(100) NOT NULL UNIQUE,
     publisher VARCHAR(255),
     published_date DATE,
     copies_available INT DEFAULT 0,
-    cover_photo VARCHAR(255)
+    cover_photo VARCHAR(255),
+    description TEXT
 )";
 
 $sql_borrowed_books = "CREATE TABLE IF NOT EXISTS borrowed_books (
@@ -54,6 +62,7 @@ $sql_borrowed_books = "CREATE TABLE IF NOT EXISTS borrowed_books (
     book_id INT NOT NULL,
     borrowed_date DATE DEFAULT CURRENT_TIMESTAMP,
     return_date DATE,
+    status ENUM('borrowed', 'returned', 'pending') DEFAULT 'borrowed',
     FOREIGN KEY (user_id) REFERENCES users(id),
     FOREIGN KEY (book_id) REFERENCES books(id)
 )";
