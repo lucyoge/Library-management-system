@@ -45,10 +45,10 @@ if (!isset($_SESSION['admin'])) {
                         <thead class="bg-blue-500 text-white">
                             <tr>
                                 <th class="px-4 py-2">Name</th>
-                                <th class="px-4 py-2">Email</th>
                                 <th class="px-4 py-2">Book Title</th>
                                 <th class="px-4 py-2">Borrow Date</th>
                                 <th class="px-4 py-2">Return Date</th>
+                                <th class="px-4 py-2">Status</th>
                             </tr>
                         </thead>
                         <tbody class="bg-white" id="recent_borrowers"></tbody>
@@ -81,12 +81,14 @@ if (!isset($_SESSION['admin'])) {
         function displayRecentBorrows(recentBorrows) {
             let tableRows = '';
             recentBorrows.forEach(borrow => {
-                tableRows += `<tr>
-                    <td>${borrow.title}</td>
-                    <td>${borrow.fullname}</td>
-                    <td>${borrow.isbn}</td>
-                    <td>${borrow.borrowed_date}</td>
-                    <td>${borrow.return_date}</td>
+                tableRows += `<tr class="odd:bg-slate-50 even:bg-white hover:bg-slate-100 transition duration-200">
+                    <td class="px-4 py-2">${borrow.fullname}</td>
+                    <td class="px-4 py-2">${borrow.title}</td>
+                    <td class="px-4 py-2">${borrow.borrowed_date}</td>
+                    <td class="px-4 py-2">${borrow.return_date || 'N/A'}</td>
+                    <td class="px-4 py-2 capitalize ${borrow.status === 'pending' ? 'text-orange-500' : borrow.status === 'borrowed' ? 'text-red-500' : 'text-green-500'}">
+                        ${borrow.status}
+                    </td>
                 </tr>`;
             });
             document.querySelector('tbody#recent_borrowers').innerHTML = tableRows;

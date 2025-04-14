@@ -20,7 +20,7 @@
     $row = $result->fetch_assoc();
     $total_borrowed = $row['total_borrowed'];
 
-    $stmt = $conn->prepare("SELECT b.title, u.fullname, b.isbn, bb.borrowed_date, bb.return_date 
+    $stmt = $conn->prepare("SELECT b.title, u.fullname, bb.status, bb.borrowed_date, bb.return_date 
                             FROM borrowed_books bb
                             INNER JOIN books b ON bb.book_id = b.id
                             INNER JOIN users u ON bb.user_id = u.id

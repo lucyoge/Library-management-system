@@ -12,13 +12,13 @@ if (!isset($_SESSION['user'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Dashboard</title>
+    <title>Borrowed Books</title>
     <script src="../css/tailwindcss.js"></script>
 </head>
 
 <body class="bg-gray-100">
     <header class="bg-blue-500 text-white py-2 px-4 flex justify-between">
-        <h1 class="text-3xl">Library User Dashboard</h1>
+        <h1 class="text-3xl">Library Borrowed Books</h1>
         <nav>
             <ul class="flex space-x-4">
                 <li><a href="dashboard.php" class="hover:underline block py-2">Book List</a></li>
@@ -30,35 +30,29 @@ if (!isset($_SESSION['user'])) {
     <main class="container mx-auto p-4">
         <section class="max-w-6xl mx-auto">
             <div class="mb-4">
-                <form id="searchForm" class="flex justify-right">
-                    <input type="text" id="searchInput" placeholder="Search books..." class="mr-2 p-2 border rounded">
-                    <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Search</button>
-                </form>
+                <h1 class="text-2xl font-bold mb-4">Borrowed Books</h1>
             </div>
             <section class="my-4">
                 <?php
                 if (isset($_GET['error'])) {
-                    if ($_GET['error'] === 'book_id_failed') {
-                        echo '<span class="text-red-500">Error: Book ID is missing.</span>';
-                        echo '<script> alert("Book ID is missing.")</script>';
-                    } elseif ($_GET['error'] === 'already_borrowed') {
-                        echo '<span class="text-red-500">Error: Book is already borrowed by you. Kindly check your borrowed books.</span>';
-                        echo '<script> alert("Book is already borrowed by you. Kindly check your borrowed books.")</script>';
-                    } elseif ($_GET['error'] === 'max_borrowed_books') {
-                        echo '<span class="text-red-500">Error: You have reached the maximum number of books that you can borrow. Kindly check your borrowed books.</span>';
-                        echo '<script> alert("You have reached the maximum number of books that you can borrow. Kindly check your borrowed books.")</script>';
-                    } elseif ($_GET['error'] === 'book_not_available') {
-                        echo '<span class="text-red-500">Error: Book is not available for borrowing.</span>';
-                        echo '<script> alert("Book is not available for borrowing.")</script>';
+                    if ($_GET['error'] === 'return_error') {
+                        echo '<span class="text-red-500">Error: Book return failed.</span>';
+                        echo '<script> alert("Book return failed.")</script>';
+                    } elseif ($_GET['error'] === 'missing_parameters') {
+                        echo '<span class="text-red-500">Error: Missing parameters.</span>';
+                        echo '<script> alert("Missing parameters.")</script>';
+                    } else {
+                        echo '<span class="text-red-500">Error: ' . htmlspecialchars($_GET['error']) . '</span>';
+                        echo '<script> alert("' . htmlspecialchars($_GET['error']) . '")</script>';
                     }
                 }
                 if (isset($_GET['success'])) {
-                    if ($_GET['success'] === 'borrow_request_sent') {
-                        echo '<span class="text-green-500">Success: Borrow request sent.</span>';
-                        echo '<script> alert("Borrow request sent.")</script>';
-                    } elseif ($_GET['success'] === 'book_returned') {
+                    if ($_GET['success'] === 'return_success') {
                         echo '<span class="text-green-500">Success: Book returned successfully.</span>';
                         echo '<script> alert("Book returned successfully.")</script>';
+                    } elseif ($_GET['success'] === 'cancel_success') {
+                        echo '<span class="text-green-500">Success: Book borrow request cancelled successfully.</span>';
+                        echo '<script> alert("Book borrow request cancelled successfully.")</script>';
                     }
                 }
                 ?>
@@ -68,7 +62,9 @@ if (!isset($_SESSION['user'])) {
                     <tr class="text-left">
                         <th class="py-2 px-4">Title</th>
                         <th class="py-2 px-4">Author</th>
-                        <th class="py-2 px-4">Available</th>
+                        <th class="py-2 px-4">Borrowed Date</th>
+                        <th class="py-2 px-4">Return Date</th>
+                        <th class="py-2 px-4">Status</th>
                         <th class="py-2 px-4">Action</th>
                     </tr>
                 </thead>
@@ -79,15 +75,9 @@ if (!isset($_SESSION['user'])) {
         </section>
     </main>
     <script>
-        document.getElementById('searchForm').addEventListener('submit', function(event) {
-            event.preventDefault();
-            fetchBooks();
-        });
 
-        function fetchBooks() {
-            const search = document.getElementById('searchInput').value;
-
-            fetch(`../backend_scripts/user/fetch_books.php?search=${encodeURIComponent(search)}`)
+        function fetchBorrowedBooks() {
+            fetch(`../backend_scripts/user/borrowed_books.php`)
                 .then(response => response.json())
                 .then(data => {
                     const tableBody = document.getElementById('booksTableBody');
@@ -102,9 +92,15 @@ if (!isset($_SESSION['user'])) {
                                     </div>
                                 </td>
                                 <td class="py-2 px-4">${book.author}</td>
-                                <td class="py-2 px-4">${book.copies_available}</td>
+                                <td class="py-2 px-4">${book.borrowed_date}</td>
+                                <td class="py-2 px-4">${book.return_date || 'N/A'}</td>
+                                <td class="py-2 px-4 text-${book.status === 'pending' ? 'orange-500' : book.status === 'borrowed' ? 'blue-500' : 'green-500'}">${book.status}</td>
                                 <td class="py-2 px-4">
-                                    ${book.is_borrowed ? '<button type="button" class="bg-gray-300 hover:bg-gray-400 text-white font-bold py-2 px-4 rounded" disabled>Borrowed</button>' : `<a href="../backend_scripts/user/borrow.php?book_id=${book.id}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 inline-block rounded">Borrow</a>`}
+                                    ${book.status === 'pending' ? 
+                                        `<a href="../backend_scripts/user/update_borrow.php?action=cancel&record_id=${book.record_id}" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Cancel Request</a>` : 
+                                        (book.status === 'returned' ? 
+                                        `<a href="../backend_scripts/user/borrow.php?book_id=${book.id}" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Borrow Again</a>` : 
+                                        `<a href="../backend_scripts/user/update_borrow.php?action=return&record_id=${book.record_id}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Return Book</a>`)}
                                 </td>
                             </tr>`
                         });
@@ -117,7 +113,7 @@ if (!isset($_SESSION['user'])) {
         }
 
         // Initial fetch to populate the table
-        fetchBooks();
+        fetchBorrowedBooks();
     </script>
 </body>
 
